@@ -20,19 +20,19 @@ app = app = FastAPI(
             "url": "https://github.com/AnimaLink/backend-api/blob/main/LICENSE",
         },
     )
-model_path = 'animalink.h5'
+model_path = 'AnimaLink2.h5'
 model = keras.models.load_model(model_path)
 
 animal_classes = {0 : 'Anjing ajag',  
-       1 : 'Merak biru',
-       2 : 'Merak hijau', 
-       3 : 'Sanca hijau',
-       4 : 'Anjing Shiba',
-       5 : 'Tenggiling',
-       6 : 'Turkish angora',
-       7 : 'Ikan koi',
-       8 : 'Jalak bali',
-       9 : 'Sanca bola'}
+       1 : 'Ikan koi',
+       2 : 'Jalak bali', 
+       3 : 'Merak biru',
+       4 : 'Merak hijau',
+       5 : 'Sanca bola',
+       6 : 'Sanca hijau',
+       7 : 'Shiba inu', 
+       8 : 'Tenggiling',
+       9 : 'Turkish angora'}
 
 extinct_animals = {"Tenggiling", "Jalak bali", "Anjing ajag", "Merak hijau", "Sanca hijau"}
 
@@ -54,11 +54,13 @@ async def predict(file: UploadFile = File(...)):
         predicted_animal = animal_classes.get(class_index, "Unknown Animal")
 
         if predicted_animal in extinct_animals:
+            status = "extinct"
             message = f"Warning! {predicted_animal} is an extinct animal. Selling them is prohibited."
         else:
+            status = "not extinct"
             message = f"The predicted animal is {predicted_animal}. You can sell them."
 
-        return JSONResponse(content={"predicted_animal": predicted_animal, "message": message})
+        return JSONResponse(content={"predicted_animal": predicted_animal, "status": status, "message": message})
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
